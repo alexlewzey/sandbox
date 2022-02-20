@@ -6,60 +6,23 @@ surfaces in lower dimension it helps given you an intuative understanding what w
 which we cannot visualise.
 """
 
+import logging
 # importing modules
-import time
 from pathlib import Path
-from typing import List, Tuple, Dict, Callable, Union, Optional, Any, Sequence, Iterator
-import logging
-from datetime import datetime, timedelta
-from pathlib import Path
-from importlib import reload
-import itertools
-import functools
-import io
-import os
-import gc
-import re
-import sys
-import time
-import logging
-import pickle
-import json
-from my_helpers import slibtk, dptk, mltk, dviztk
 
-import numpy as np
-from sklearn.linear_model import LinearRegression
-from tqdm import tqdm
 import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-import matplotlib.pyplot as plt
-import seaborn as sns
 import plotly.express as px
-import plotly.graph_objects as go
+import umap
+from lightgbm import LGBMRegressor
 from plotly.offline import plot
-from functools import partial
-import torch
-import umap
-import torch.nn as nn
-from pygcp import pygcp
-from pyflake import pyflake
-
-import cufflinks as cf
-import pandas as pd
-import statsmodels.api as sm
-import umap
-from plotly.offline import init_notebook_mode, plot
 from sklearn.datasets import load_boston
-from sklearn.decomposition import PCA
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.model_selection import GridSearchCV
+from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVR
 from sklearn.tree import DecisionTreeRegressor
-from my_helpers import mltk, dptk, slibtk
 from xgboost import XGBRegressor
-from lightgbm import LGBMRegressor
+from dstk import mltk, dviztk
 
 logger = logging.getLogger(__name__)
 
@@ -68,7 +31,7 @@ pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 1000)
 
 ROOT = Path(__file__).parent.parent
-OUTPUT = ROOT / 'output'
+OUTPUT = ROOT / 'mlviz' / 'output'
 
 # loading and preprocessing data #######################################################################################
 boston = load_boston()
@@ -82,7 +45,8 @@ y = boston_norm[:, -1]
 x_norm = boston_norm[:, :-1]
 
 # pca
-pcs, pca = mltk.pca_estimate(x_norm, n_components=2)
+res = mltk.pca(x_norm, n_components=2)
+pcs, pca = res['pcs'], res['pca']
 pcs = pd.DataFrame(data=pcs, columns=['dim0', 'dim1'])
 pcs['lbl'] = y
 pcs['type'] = 'pca'
@@ -96,7 +60,7 @@ reduced['type'] = 'umap'
 # visulasing the difference between pca and umap
 comp = pd.concat([pcs, reduced])
 fig = px.scatter_3d(comp, 'dim0', 'dim1', 'lbl', color='type')
-plot(fig)
+plot(fig, OUTPUT / 'pca_vs_umap.html')
 
 # iterating over several models plotting them as 3d regression surfaces
 n_trees = 300
@@ -126,4 +90,3 @@ for nm, model in models.items():
 # grid = GridSearchCV(LGBMRegressor(), mltk.param_lgbm)
 # grid.fit(pcs.iloc[:, :3], pcs['lbl'])
 # grid.best_params_
-
