@@ -13,6 +13,7 @@ import seaborn as sns
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.offline import plot
+from dstk import dviztk
 
 pd.set_option('display.max_rows', 500)
 pd.set_option('display.max_columns', 500)
@@ -25,21 +26,21 @@ y = 0.5 * x ** 2 + 3 * x + np.random.randint(-50, 50, size=x.shape) * np.random.
 def ewa(a1, a2, b1=0.9):
     return b1 * a2 + (1 - b1) * a1
 
-e = []
-v1 = 0
-for v2 in y:
-    v1 = v1*0.9 + v2*0.1
-    e.append(v1)
 
-e3 = []
-v1 = 0
-for v2 in y:
-    v1 = v1*0.5 + v2*0.5
-    e3.append(v1)
+def ewa_series(y, b: float) -> List:
+    e = []
+    v1 = 0
+    for v2 in y:
+        v1 = v1 * b + v2 * (1 - b)
+        e.append(v1)
+    return e
 
+
+series = {b: ewa_series(y, b) for b in [0.1, 0.5, 0.9]}
 
 fig, ax = plt.subplots()
-ax.scatter(x, y)
-ax.scatter(x, e)
-ax.scatter(x, e3)
+ax.scatter(x, y, label='actual')
+for b, s in series.items():
+    ax.plot(x, s, label=b)
+plt.legend()
 plt.show()

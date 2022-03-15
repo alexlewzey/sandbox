@@ -9,7 +9,6 @@ which we cannot visualise.
 import logging
 # importing modules
 from pathlib import Path
-
 import pandas as pd
 import plotly.express as px
 import umap
@@ -60,7 +59,7 @@ reduced['type'] = 'umap'
 # visulasing the difference between pca and umap
 comp = pd.concat([pcs, reduced])
 fig = px.scatter_3d(comp, 'dim0', 'dim1', 'lbl', color='type')
-plot(fig, OUTPUT / 'pca_vs_umap.html')
+plot(fig, filename=(OUTPUT / 'pca_vs_umap.html').as_posix())
 
 # iterating over several models plotting them as 3d regression surfaces
 n_trees = 300
@@ -90,3 +89,5 @@ for nm, model in models.items():
 # grid = GridSearchCV(LGBMRegressor(), mltk.param_lgbm)
 # grid.fit(pcs.iloc[:, :3], pcs['lbl'])
 # grid.best_params_
+
+

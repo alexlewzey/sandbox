@@ -137,7 +137,13 @@ def user_word() -> str:
     return word
 
 
-def find_all_matching_element_combinations(word: str, substring: str, results: List, matches: Optional[List] = None) -> None:
+def find_all_matching_element_combinations(
+        word: str,
+        results: List,
+        substring: Optional[str] = None,
+        matches: Optional[List] = None
+) -> None:
+    substring = substring if substring is not None else word
     if substring == '':
         result = ''.join(matches)
         if result == word:
@@ -148,24 +154,22 @@ def find_all_matching_element_combinations(word: str, substring: str, results: L
     char_1 = substring[0]
     if char_1 in elements_lower:
         matches_1 = matches + [char_1] if matches else [char_1]
-        find_all_matching_element_combinations(word, substring[1:], results, matches_1)
+        find_all_matching_element_combinations(word=word, results=results, substring=substring[1:], matches=matches_1)
 
     char_2 = substring[:2]
     if (char_2 in elements_lower) and (len(char_2) == 2):
         matches_2 = matches + [char_2] if matches else [char_2]
-        find_all_matching_element_combinations(word, substring[2:], results, matches_2)
+        find_all_matching_element_combinations(word=word, results=results, substring=substring[2:], matches=matches_2)
 
 
 def main(word: Optional[str] = None) -> Optional[bool]:
+    """good examples: mtds nico nini"""
     word = str(word) if word else user_word()
-    # word = 'mtds'
-    # word = 'nico'
-    # word = 'nini'
     if not word.isalpha():
         print(f'word must contain only alphabetic characters')
         return None
     results = []
-    find_all_matching_element_combinations(word, word, results)
+    find_all_matching_element_combinations(word=word, results=results)
     return bool(results)
 
 
