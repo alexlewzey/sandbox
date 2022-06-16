@@ -1,4 +1,5 @@
 from typing import *
+
 from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
 import logging
 import collections
@@ -303,6 +304,9 @@ px.bar(df, 'index', 'pmf').plot()
 p_value = dist.cdf(obs2[0]) * 2
 print(p_value)
 
+for i in range(1, 10):
+    print(f'{i} - {39 / i:.1f}')
+
 # chi-squared method
 print(stats.chisquare(obs), '\n', stats.chisquare(obs2))
 
@@ -317,7 +321,6 @@ max_pdf_prob = (df['pdf'].argmax() + 1) / df.shape[0]
 prob_heads = np.array(obs) / sum(obs)
 print(f'max_pdf_prob={max_pdf_prob:.3f}, prob_heads={prob_heads}')
 p_value = 1 - dist.cdf(0.5)
-p_value
 
 # multivariate distribution ############################################################################################
 
